@@ -151,7 +151,6 @@ a:hover {
     top: 0;
     width: 100%;
     background: rgba(26, 31, 58, 0.95);
-    backdrop-filter: blur(10px);
     z-index: 1000;
     box-shadow: 0 8px 20px rgba(6, 11, 30, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -260,7 +259,6 @@ a:hover {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(5px);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -802,6 +800,10 @@ a:hover {
     background: linear-gradient(135deg, var(--color-charcoal) 0%, var(--color-navy) 100%);
 }
 
+.skills .section-title {
+    color: var(--color-white);
+}
+
 .skills-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1013,6 +1015,10 @@ a:hover {
     background: linear-gradient(135deg, var(--color-charcoal) 0%, var(--color-navy) 100%);
 }
 
+.interests .section-title {
+    color: var(--color-white);
+}
+
 .interests-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1027,7 +1033,6 @@ a:hover {
     border: 1px solid rgba(0, 212, 255, 0.2);
     transition: all var(--transition-normal);
     animation: fadeInUp 0.8s ease-out;
-    backdrop-filter: blur(10px);
 }
 
 .interest-card:hover {
@@ -1146,8 +1151,22 @@ a:hover {
     margin-bottom: var(--spacing-md);
 }
 
-.field-wrap {
+.field-label {
+    display: block;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin-bottom: var(--spacing-xs);
+    font-size: 0.95rem;
+    transition: color var(--transition-normal);
+}
+
+.form-group:focus-within .field-label {
+    color: var(--color-accent-electric);
+}
+
+.input-wrapper {
     position: relative;
+    width: 100%;
 }
 
 .form-field {
@@ -1159,6 +1178,27 @@ a:hover {
     font-size: 1rem;
     transition: all var(--transition-normal);
     background: var(--color-white);
+    display: block;
+}
+
+.floating-placeholder {
+    position: absolute;
+    left: var(--spacing-sm);
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    color: #7a8090;
+    pointer-events: none;
+    transition: all var(--transition-normal);
+    z-index: 10;
+    /* Ensure it doesn't have a background when inside */
+    background: transparent;
+}
+
+/* Initial position for textarea placeholder */
+textarea.form-field ~ .floating-placeholder {
+    top: var(--spacing-sm);
+    transform: none;
 }
 
 .form-field:focus {
@@ -1167,25 +1207,23 @@ a:hover {
     box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
 }
 
-.form-field::placeholder {
-    color: #7a8090;
-    opacity: 1;
-    transition: opacity var(--transition-fast);
+/* Float animation: Move to top border line */
+.form-field:focus ~ .floating-placeholder,
+.form-field:not(:placeholder-shown) ~ .floating-placeholder {
+    top: 0;
+    left: var(--spacing-sm);
+    transform: translateY(-50%) scale(0.85);
+    font-size: 0.85rem;
+    color: var(--color-accent-gold);
+    background: var(--color-white);
+    padding: 0 6px;
 }
 
-.form-field:focus::placeholder {
-    opacity: 0;
-}
-
-.field-label {
-    display: block;
-    margin-top: 8px;
-    margin-left: 2px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #6d7386;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+/* Ensure textarea placeholder also floats to the border */
+textarea.form-field:focus ~ .floating-placeholder,
+textarea.form-field:not(:placeholder-shown) ~ .floating-placeholder {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
 }
 
 .form-message {
@@ -1210,6 +1248,8 @@ a:hover {
     border: 2px solid #ff4444;
     display: block;
 }
+
+/* Remove Floating Label Specific Styles as they are replaced by standard labels */
 
 /* =====================================================
    FOOTER (modern three-column layout)

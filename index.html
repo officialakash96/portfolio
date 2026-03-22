@@ -13,7 +13,8 @@
     <title>Akash Singh - Technical Solutions Consultant</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap"></noscript>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='75' font-size='75' fill='%2300d4ff'>AS</text></svg>">
 </head>
@@ -27,7 +28,10 @@
                 <div class="nav-logo-inner">
                     <div class="nav-logo-front">AS</div>
                     <div class="nav-logo-back">
-                        <img src="static/profilePic.jpeg" alt="Akash Singh Profile" class="profile-pic">
+                        <picture>
+                            <source srcset="static/profilePic.webp" type="image/webp">
+                            <img src="static/profilePic.jpeg" alt="Akash Singh Profile" class="profile-pic">
+                        </picture>
                     </div>
                 </div>
             </div>
@@ -485,28 +489,32 @@
 
                 <form class="contact-form" id="contactForm">
                     <div class="form-group">
-                        <div class="field-wrap">
-                        <input type="text" id="name" class="form-field" placeholder="John Doe" required>
-                        </div>
                         <label for="name" class="field-label">Name</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="name" class="form-field" placeholder=" " required>
+                            <span class="floating-placeholder">John Doe</span>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <div class="field-wrap">
-                        <input type="email" id="email" class="form-field" placeholder="user@example.com" required>
-                        </div>
                         <label for="email" class="field-label">Email</label>
+                        <div class="input-wrapper">
+                            <input type="email" id="email" class="form-field" placeholder=" " required>
+                            <span class="floating-placeholder">user@example.com</span>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <div class="field-wrap">
-                        <input type="text" id="subject" class="form-field" placeholder="Project collaboration">
-                        </div>
                         <label for="subject" class="field-label">Subject</label>
+                        <div class="input-wrapper">
+                            <input type="text" id="subject" class="form-field" placeholder=" " required>
+                            <span class="floating-placeholder">Project collaboration</span>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <div class="field-wrap">
-                        <textarea id="message" class="form-field" placeholder="Write your message..." rows="5" required></textarea>
-                        </div>
                         <label for="message" class="field-label">Message</label>
+                        <div class="input-wrapper">
+                            <textarea id="message" class="form-field" placeholder=" " rows="5" required></textarea>
+                            <span class="floating-placeholder">Write your message...</span>
+                        </div>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
                     <div id="formMessage"></div>
@@ -514,6 +522,19 @@
             </div>
         </div>
     </section>
+
+    <!-- =====================================================
+         IMAGE MODAL (pre-loaded for performance)
+         ===================================================== -->
+    <div class="image-modal" id="imageModal">
+        <div class="image-modal-content">
+            <picture>
+                <source srcset="static/profilePic.webp" type="image/webp">
+                <img src="static/profilePic.jpeg" alt="Akash Singh Profile - Expanded" class="expanded-profile-image" loading="lazy">
+            </picture>
+            <div class="modal-close-hint">Click to close or flip back</div>
+        </div>
+    </div>
 
     <!-- =====================================================
          FOOTER
@@ -525,7 +546,10 @@
                     <div class="nav-logo-inner">
                         <div class="nav-logo-front">AS</div>
                         <div class="nav-logo-back">
-                            <img src="static/profilePic.jpeg" alt="Akash Singh Profile" class="profile-pic">
+                            <picture>
+                                <source srcset="static/profilePic.webp" type="image/webp">
+                                <img src="static/profilePic.jpeg" alt="Akash Singh Profile" class="profile-pic">
+                            </picture>
                         </div>
                     </div>
                 </div>
@@ -572,6 +596,6 @@
         </div>
     </footer>
 
-    <script src="js/script.js"></script>
-</body>
-</html>
+    <script src="js/script.js" defer></script>
+    </body>
+    </html>

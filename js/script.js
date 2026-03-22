@@ -21,106 +21,60 @@ if (hamburger) {
 // COIN FLIP LOGO ANIMATION WITH MODAL EXPANSION
 // ===================================================== 
 const logoFlip = document.getElementById('logoFlip');
+const imageModal = document.getElementById('imageModal');
 let isFlipped = false;
-let isExpanded = false;
 let isAnimating = false;
 let escapeListenerBound = false;
 
-// Pre-create modal to avoid reflow/repaint lag
-const createImageModal = () => {
-    const modal = document.createElement('div');
-    modal.className = 'image-modal';
-    modal.id = 'imageModal';
-    
-    const modalContent = document.createElement('div');
-    modalContent.className = 'image-modal-content';
-    
-    const expandedImage = document.createElement('img');
-    expandedImage.src = 'static/profilePic.jpeg';
-    expandedImage.alt = 'Akash Singh Profile - Expanded';
-    expandedImage.className = 'expanded-profile-image';
-    expandedImage.loading = 'lazy';
-    
-    const closeHint = document.createElement('div');
-    closeHint.className = 'modal-close-hint';
-    closeHint.textContent = 'Click to close or flip back';
-    
-    modalContent.appendChild(expandedImage);
-    modalContent.appendChild(closeHint);
-    modal.appendChild(modalContent);
-    
-    return modal;
-};
-
 const closeImageModal = () => {
-    if (isAnimating) return;
+    if (isAnimating || !isFlipped) return;
     
     isAnimating = true;
-    const modal = document.getElementById('imageModal');
+    imageModal.classList.remove('active');
+    logoFlip.classList.remove('flipped');
     
-    if (modal) {
-        modal.classList.remove('active');
-        
-        setTimeout(() => {
-            modal.remove();
-            isExpanded = false;
-            isFlipped = false;
-            logoFlip.classList.remove('flipped');
-            isAnimating = false;
-        }, 420);
-    }
+    setTimeout(() => {
+        isFlipped = false;
+        isAnimating = false;
+    }, 420);
 };
 
-const attachModalCloseListener = (modal) => {
-    modal.addEventListener('click', (e) => {
-        const clickedCloseHint = e.target.classList.contains('modal-close-hint');
-        const clickedExpandedImage = e.target.classList.contains('expanded-profile-image');
-        if (e.target === modal || clickedCloseHint || clickedExpandedImage) {
+const openImageModal = () => {
+    if (isAnimating || isFlipped) return;
+
+    isAnimating = true;
+    isFlipped = true;
+    logoFlip.classList.add('flipped');
+    imageModal.classList.add('active');
+    
+    setTimeout(() => {
+        isAnimating = false;
+    }, 420);
+};
+
+if (logoFlip && imageModal) {
+    logoFlip.addEventListener('click', () => {
+        if (isFlipped) {
+            closeImageModal();
+        } else {
+            openImageModal();
+        }
+    });
+
+    imageModal.addEventListener('click', (e) => {
+        if (e.target === imageModal || e.target.classList.contains('modal-close-hint') || e.target.classList.contains('expanded-profile-image')) {
             closeImageModal();
         }
     });
 
     if (!escapeListenerBound) {
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && isExpanded) {
+            if (e.key === 'Escape' && isFlipped) {
                 closeImageModal();
             }
         });
         escapeListenerBound = true;
     }
-};
-
-if (logoFlip) {
-    logoFlip.addEventListener('click', (e) => {
-        // Prevent overlapping animations
-        if (isAnimating) return;
-        
-        if (isExpanded) {
-            // Close the modal
-            closeImageModal();
-        } else {
-            // Expand to full screen with optimized timing
-            isAnimating = true;
-            isFlipped = true;
-            isExpanded = true;
-            
-            // Add flipped class immediately for smooth flip
-            logoFlip.classList.add('flipped');
-            
-            // Create and append modal with minimal delay
-            const modal = createImageModal();
-            document.body.appendChild(modal);
-            
-            // Attach close listeners
-            attachModalCloseListener(modal);
-            
-            // Use requestAnimationFrame for optimal timing
-            requestAnimationFrame(() => {
-                modal.classList.add('active');
-                isAnimating = false;
-            });
-        }
-    });
 }
 
 // =====================================================
@@ -234,7 +188,7 @@ const updateActiveNavLink = () => {
     const sections = document.querySelectorAll('section[id]');
     const navLinks = document.querySelectorAll('.nav-link');
 
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', throttle(() => {
         let currentSection = '';
 
         sections.forEach(section => {
@@ -252,7 +206,7 @@ const updateActiveNavLink = () => {
                 link.classList.add('active');
             }
         });
-    });
+    }, 100));
 };
 
 updateActiveNavLink();
@@ -263,27 +217,29 @@ updateActiveNavLink();
 // =====================================================
 const animateCounters = () => {
     const counters = document.querySelectorAll('.highlight-item h4');
-    const speed = 200;
+    const animationDuration = 1500; // ms
 
     counters.forEach(counter => {
-        const updateCount = () => {
-            const target = +counter.innerText.replace(/\D/g, '');
-            const increment = target / speed;
+        const target = +counter.innerText.replace(/\D/g, '');
+        counter.setAttribute('data-original', counter.innerText);
+        let start = 0;
+        const startTime = performance.now();
 
-            const updateCounter = () => {
-                const count = +counter.innerText.replace(/\D/g, '');
-                if (count < target) {
-                    counter.innerText = Math.ceil(count + increment) + (counter.innerText.includes('+') ? '+' : '');
-                    setTimeout(updateCounter, 50);
-                } else {
-                    counter.innerText = counter.getAttribute('data-original') || counter.innerText;
-                }
-            };
+        const updateCounter = (currentTime) => {
+            const elapsedTime = currentTime - startTime;
+            const progress = Math.min(elapsedTime / animationDuration, 1);
+            const currentCount = Math.floor(progress * target);
+            
+            counter.innerText = currentCount + (counter.innerText.includes('+') ? '+' : '');
 
-            updateCounter();
+            if (progress < 1) {
+                requestAnimationFrame(updateCounter);
+            } else {
+                counter.innerText = counter.getAttribute('data-original');
+            }
         };
 
-        counter.setAttribute('data-original', counter.innerText);
+        requestAnimationFrame(updateCounter);
     });
 };
 
